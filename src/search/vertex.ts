@@ -1,33 +1,50 @@
 export class Vertex {
-  private to: Map<number, Vertex> = new Map();
+  to: Map<number, Vertex>;
 
-  private terminal = false;
+  link: Vertex;
 
-  has(code: number): boolean {
+  go: Map<number, Vertex>;
+
+  isTerminal = false;
+
+  constructor(public pch: number, public p: Vertex) {
+    this.to = new Map();
+    this.go = new Map();
+  }
+
+  hasTo(code: number): boolean {
     const { to } = this;
 
     return to.has(code);
   }
 
-  get(code: number): Vertex {
+  getTo(code: number): Vertex {
     const { to } = this;
 
     return to.get(code);
   }
 
-  set(code: number, vertex: Vertex): void {
+  setTo(code: number, vertex: Vertex): void {
     const { to } = this;
 
     to.set(code, vertex);
   }
 
-  markTerminal() {
-    this.terminal = true;
+  hasGo(code: number): boolean {
+    const { go } = this;
+
+    return go.has(code);
   }
 
-  isTerminal(): boolean {
-    const { terminal } = this;
+  getGo(code: number): Vertex {
+    const { go } = this;
 
-    return terminal;
+    return go.get(code);
+  }
+
+  setGo(code: number, vertex: Vertex): void {
+    const { go } = this;
+
+    go.set(code, vertex);
   }
 }

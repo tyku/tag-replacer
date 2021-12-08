@@ -5,7 +5,12 @@ describe('Tries tests', () => {
 
   beforeEach(async () => {
     triesInstance = new Tries();
-    triesInstance.addWord('Frodo').addWord('Gandalf').addWord('Sauron');
+    triesInstance
+      .addWord('abc')
+      .addWord('bcdc')
+      .addWord('cccb')
+      .addWord('bcdd')
+      .addWord('bbbc');
   });
 
   describe('Get code', () => {
@@ -16,13 +21,28 @@ describe('Tries tests', () => {
     });
   });
 
-  describe('Find word', () => {
+  describe('Find added word in trie', () => {
     it('should return false', () => {
-      expect(triesInstance.find('test')).toBe(false);
+      expect(triesInstance.findInTrie('test')).toBe(false);
     });
 
     it('should return true', () => {
-      expect(triesInstance.find('Frodo')).toBe(true);
+      expect(triesInstance.findInTrie('abc')).toBe(true);
+      expect(triesInstance.findInTrie('bcdd')).toBe(true);
+    });
+  });
+
+  describe('Find word in text', () => {
+    it('should return array of founded words', () => {
+      const returned = triesInstance.findNew('abcdcbcddbbbcccbbbcccbb');
+      const expected = ['abc', 'bcdc', 'bcdd', 'bbbc', 'cccb', 'bbbc', 'cccb'];
+      expect(returned).toStrictEqual(expected);
+    });
+
+    it('should return empty array', () => {
+      const returned = triesInstance.findNew('test');
+      const expected = [];
+      expect(returned).toStrictEqual(expected);
     });
   });
 });
