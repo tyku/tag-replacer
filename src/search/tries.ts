@@ -13,7 +13,12 @@ export class Tries {
       const code = Tries.getCode(char);
 
       if (!localVertex.hasTo(code)) {
-        localVertex.setTo(code, new Vertex(code, localVertex));
+        const vertex = new Vertex(code, localVertex);
+        if (char === '*') {
+          vertex.isPattern = true;
+        }
+
+        localVertex.setTo(code, vertex);
       }
 
       localVertex = localVertex.getTo(code);
@@ -48,27 +53,41 @@ export class Tries {
     let u: Vertex = this.root;
     let foundString = '';
     const result = [];
+    let prevVertex = u;
 
     for (let i = 0; i < lowCaseStr.length; i++) {
       u = this.go(u, Tries.getCode(lowCaseStr[i]));
 
-      if (u.isTerminal) {
-        let l = u;
-
+      if (prevVertex.isTerminal && u === this.root) {
+        let l = prevVertex;
+        console.log('-------------', prevVertex.originalSymb);
         while (l.pch >= 0) {
-          foundString = Tries.getLetterByCode(l.pch) + foundString;
+          const letter = l.isPattern
+            ? l.originalSymb
+            : Tries.getLetterByCode(l.pch);
+          foundString = letter + foundString;
           l = l.p;
         }
-
         result.push(foundString);
         foundString = '';
+        prevVertex.reset();
       }
+
+      prevVertex = u;
     }
 
     return result;
   }
 
   go(v: Vertex, code: number): Vertex {
+    const numberCode = Number(Tries.getLetterByCode(code));
+    const isNumber = !!numberCode && Number.isInteger(numberCode);
+    const originLetter = Tries.getLetterByCode(code);
+
+    if (isNumber) {
+      code = Tries.getCode('*');
+    }
+
     if (!v.hasGo(code)) {
       if (v.getTo(code)) {
         v.setGo(code, v.getTo(code));
@@ -79,13 +98,19 @@ export class Tries {
       }
     }
 
-    return v.getGo(code);
+    const u = v.getGo(code);
+    if (isNumber) {
+      u.originalSymb += originLetter;
+    }
+    return u;
   }
 
   private link(v: Vertex): Vertex {
     if (!v.link) {
       if (v === this.root || v.p === this.root) {
         v.link = this.root;
+      } else if (v.isPattern) {
+        v.link = v.p;
       } else {
         v.link = this.go(this.link(v.p), v.pch);
       }

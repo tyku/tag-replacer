@@ -7,8 +7,18 @@ export class Vertex {
 
   isTerminal = false;
 
+  isPattern = false;
+
+  originalSymb = '';
+
   constructor(public pch: number, public p: Vertex) {
     this.to = new Map();
+    this.go = new Map();
+  }
+
+  reset() {
+    this.originalSymb = '';
+    this.link = undefined;
     this.go = new Map();
   }
 
