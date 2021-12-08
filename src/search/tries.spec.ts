@@ -6,6 +6,8 @@ describe('Tries tests', () => {
   beforeEach(async () => {
     triesInstance = new Tries();
     triesInstance
+      .addWord('@user-n')
+      .addWord('#tag-n')
       .addWord('abc')
       .addWord('bcdc')
       .addWord('cccb')
@@ -42,6 +44,16 @@ describe('Tries tests', () => {
     it('should return empty array', () => {
       const returned = triesInstance.findNew('test');
       const expected = [];
+      expect(returned).toStrictEqual(expected);
+    });
+
+    it('should return array this tags and mentions', () => {
+      const returned = triesInstance.findNew(
+        'asded @user-N asdjhu @user-N #tag-N asdkjasdl #tag-N',
+      );
+
+      const expected = ['@user-n', '@user-n', '#tag-n', '#tag-n'];
+
       expect(returned).toStrictEqual(expected);
     });
   });

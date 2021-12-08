@@ -95,10 +95,10 @@ export class Tries {
   }
 
   static getCode(char: string): number {
-    return char.charCodeAt(0) - FIRST_LETTER.charCodeAt(0);
+    return char.charCodeAt(0) - FIRST_LETTER.charCodeAt(0) + 1000;
   }
 
   static getLetterByCode(code: number): string {
-    return String.fromCharCode(FIRST_LETTER.charCodeAt(0) + code);
+    return String.fromCharCode(FIRST_LETTER.charCodeAt(0) + code - 1000);
   }
 }
