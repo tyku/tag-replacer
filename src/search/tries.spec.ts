@@ -5,21 +5,14 @@ describe('Tries tests', () => {
 
   beforeEach(async () => {
     triesInstance = new Tries();
-    triesInstance
-      .addWord('@user-n')
-      .addWord('#tag-n')
-      .addWord('abc')
-      .addWord('bcdc')
-      .addWord('cccb')
-      .addWord('bcdd')
-      .addWord('bbbc');
+    triesInstance.addWord('#tag-*').addWord('@user-*(?)');
   });
 
   describe('Get code', () => {
     it('should return char code', () => {
-      expect(Tries.getCode('a')).toBe(0);
-      expect(Tries.getCode('b')).toBe(1);
-      expect(Tries.getCode('c')).toBe(2);
+      expect(Tries.getCode('a')).toBe(1000);
+      expect(Tries.getCode('b')).toBe(1001);
+      expect(Tries.getCode('c')).toBe(1002);
     });
   });
 
@@ -29,18 +22,12 @@ describe('Tries tests', () => {
     });
 
     it('should return true', () => {
-      expect(triesInstance.findInTrie('abc')).toBe(true);
-      expect(triesInstance.findInTrie('bcdd')).toBe(true);
+      expect(triesInstance.findInTrie('@user-*(?)')).toBe(true);
+      expect(triesInstance.findInTrie('#tag-*')).toBe(true);
     });
   });
 
   describe('Find word in text', () => {
-    it('should return array of founded words', () => {
-      const returned = triesInstance.findNew('abcdcbcddbbbcccbbbcccbb');
-      const expected = ['abc', 'bcdc', 'bcdd', 'bbbc', 'cccb', 'bbbc', 'cccb'];
-      expect(returned).toStrictEqual(expected);
-    });
-
     it('should return empty array', () => {
       const returned = triesInstance.findNew('test');
       const expected = [];
@@ -49,12 +36,15 @@ describe('Tries tests', () => {
 
     it('should return array this tags and mentions', () => {
       const returned = triesInstance.findNew(
-        'asded @user-N asdjhu @user-N #tag-N asdkjasdl #tag-N',
+        'asd#tag-434ekd@user-123(ds) js@user-53(dfad)wadssad@user-9892.',
       );
 
-      const expected = ['@user-n', '@user-n', '#tag-n', '#tag-n'];
-
-      expect(returned).toStrictEqual(expected);
+      expect(returned).toStrictEqual([
+        '#tag-434',
+        '@user-123(ds)',
+        '@user-53(dfad)',
+        '@user-9892',
+      ]);
     });
   });
 });
