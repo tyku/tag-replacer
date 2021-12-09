@@ -4,18 +4,18 @@ import {
   FIRST_NUMBER_LETTER,
   LAST_NUMBER_LETTER,
 } from '../constants';
-import { Tries } from '../tries';
+import { getCode, getLetterByCode } from './codes';
 
 export const exePattern = (char): number | undefined => {
-  return char >= Tries.getCode(FIRST_NUMBER_LETTER) &&
-    char <= Tries.getCode(LAST_NUMBER_LETTER)
-    ? Tries.getCode(NUMBER_PATTERN)
+  return char >= getCode(FIRST_NUMBER_LETTER) &&
+    char <= getCode(LAST_NUMBER_LETTER)
+    ? getCode(NUMBER_PATTERN)
     : undefined;
 };
 
 export const letterPattern = (char: number): number | undefined => {
-  const letter = Tries.getLetterByCode(char);
-  return /[a-zа-я]/.test(letter) ? Tries.getCode(LETTER_PATTERN) : undefined;
+  const letter = getLetterByCode(char);
+  return /[a-zа-я]/.test(letter) ? getCode(LETTER_PATTERN) : undefined;
 };
 
 export const getPattern = (pattern) => {

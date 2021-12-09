@@ -1,14 +1,13 @@
 import { Vertex } from './vertex';
 import {
-  SALT_CODE,
   DEFAULT_CHAR,
-  FIRST_LETTER,
   NUMBER_PATTERN,
   LETTER_PATTERN,
   DEFAULT_POINTER,
 } from './constants';
 
 import { getPattern } from './libs';
+import { getCode, getLetterByCode } from './libs/codes';
 
 export class Tries {
   private root = new Vertex(DEFAULT_CHAR, DEFAULT_POINTER);
@@ -19,7 +18,7 @@ export class Tries {
     const lowCaseStr = s.toLowerCase();
 
     for (const char of lowCaseStr) {
-      const code = Tries.getCode(char);
+      const code = getCode(char);
 
       if (!localVertex.hasTo(code)) {
         const vertex = new Vertex(code, localVertex);
@@ -50,7 +49,7 @@ export class Tries {
     const lowCaseStr = s.toLowerCase();
 
     for (const char of lowCaseStr) {
-      const code = Tries.getCode(char);
+      const code = getCode(char);
 
       if (!localRoot.hasTo(code)) {
         return false;
@@ -70,12 +69,10 @@ export class Tries {
     let prevVertex = u;
 
     for (let i = 0; i < lowCaseStr.length; i++) {
-      u = this.go(u, Tries.getCode(lowCaseStr[i]));
+      u = this.go(u, getCode(lowCaseStr[i]));
 
       if (prevVertex.hasGo(u.pch) || prevVertex.hasTo(u.pch)) {
-        const letter = u.isPattern
-          ? u.originalSymb
-          : Tries.getLetterByCode(u.pch);
+        const letter = u.isPattern ? u.originalSymb : getLetterByCode(u.pch);
         foundString += letter;
       } else if (foundString) {
         result.push(foundString);
@@ -87,12 +84,12 @@ export class Tries {
     return result;
   }
 
-  go(v: Vertex, code: number): Vertex {
+  private go(v: Vertex, code: number): Vertex {
     if (!v.hasGo(code)) {
       if (v.getTo(code)) {
         const u = v.getTo(code);
         if (u.isPattern) {
-          u.originalSymb = Tries.getLetterByCode(code);
+          u.originalSymb = getLetterByCode(code);
         }
         v.setGo(code, u);
       } else if (v === this.root) {
@@ -115,13 +112,5 @@ export class Tries {
     }
 
     return v.link;
-  }
-
-  static getCode(char: string): number {
-    return char.charCodeAt(0) - FIRST_LETTER.charCodeAt(0) + SALT_CODE;
-  }
-
-  static getLetterByCode(code: number): string {
-    return String.fromCharCode(FIRST_LETTER.charCodeAt(0) + code - SALT_CODE);
   }
 }
