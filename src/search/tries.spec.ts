@@ -18,12 +18,12 @@ describe('Tries tests', () => {
 
   describe('Find added word in trie', () => {
     it('should return false', () => {
-      expect(triesInstance.findInTrie('test')).toBe(false);
+      expect(triesInstance.patternExist('test')).toBe(false);
     });
 
     it('should return true', () => {
-      expect(triesInstance.findInTrie('@user-*(?)')).toBe(true);
-      expect(triesInstance.findInTrie('#tag-*')).toBe(true);
+      expect(triesInstance.patternExist('@user-*(?)')).toBe(true);
+      expect(triesInstance.patternExist('#tag-*')).toBe(true);
     });
   });
 

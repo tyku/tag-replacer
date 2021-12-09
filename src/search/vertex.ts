@@ -9,8 +9,8 @@ export class Vertex {
 
   isPattern = false;
 
-  // patternMap: Map<number, number>;
   patternMap;
+
   originalSymb = '';
 
   constructor(public pch: number, public p: Vertex) {

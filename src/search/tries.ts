@@ -1,28 +1,17 @@
 import { Vertex } from './vertex';
-import { FIRST_LETTER } from './constants';
+import {
+  SALT_CODE,
+  DEFAULT_CHAR,
+  FIRST_LETTER,
+  NUMBER_PATTERN,
+  LETTER_PATTERN,
+  DEFAULT_POINTER,
+} from './constants';
 
-const exePattern = (char): number | undefined => {
-  return char >= Tries.getCode('0') && char <= Tries.getCode('9')
-    ? Tries.getCode('*')
-    : undefined;
-};
-
-const letterPattern = (char: number): number | undefined => {
-  const letter = Tries.getLetterByCode(char);
-  return /[a-zа-я]/.test(letter) ? Tries.getCode('?') : undefined;
-};
-
-const getPattern = (pattern) => {
-  switch (pattern) {
-    case '*':
-      return exePattern;
-    case '?':
-      return letterPattern;
-  }
-};
+import { getPattern } from './libs';
 
 export class Tries {
-  private root = new Vertex(-1, undefined);
+  private root = new Vertex(DEFAULT_CHAR, DEFAULT_POINTER);
 
   addWord(s: string) {
     const { root } = this;
@@ -34,7 +23,7 @@ export class Tries {
 
       if (!localVertex.hasTo(code)) {
         const vertex = new Vertex(code, localVertex);
-        if (['*', '?'].includes(char)) {
+        if ([NUMBER_PATTERN, LETTER_PATTERN].includes(char)) {
           vertex.isPattern = true;
           const aliases = getPattern(char);
           localVertex.patternMap = aliases;
@@ -54,7 +43,7 @@ export class Tries {
     return this;
   }
 
-  findInTrie(s: string) {
+  patternExist(s: string) {
     const { root } = this;
     let localRoot = root;
 
@@ -129,10 +118,10 @@ export class Tries {
   }
 
   static getCode(char: string): number {
-    return char.charCodeAt(0) - FIRST_LETTER.charCodeAt(0) + 1000;
+    return char.charCodeAt(0) - FIRST_LETTER.charCodeAt(0) + SALT_CODE;
   }
 
   static getLetterByCode(code: number): string {
-    return String.fromCharCode(FIRST_LETTER.charCodeAt(0) + code - 1000);
+    return String.fromCharCode(FIRST_LETTER.charCodeAt(0) + code - SALT_CODE);
   }
 }

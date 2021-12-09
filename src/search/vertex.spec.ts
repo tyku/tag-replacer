@@ -1,10 +1,11 @@
 import { Vertex } from './vertex';
+import { DEFAULT_CHAR, DEFAULT_POINTER } from './constants';
 
-describe('Vetex tests', () => {
+describe('Vertex tests', () => {
   let vertexInstance = null;
 
   beforeEach(async () => {
-    vertexInstance = new Vertex(-1, undefined);
+    vertexInstance = new Vertex(DEFAULT_CHAR, DEFAULT_POINTER);
   });
 
   describe('Vertex has operations', () => {
