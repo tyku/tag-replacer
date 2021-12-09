@@ -1,0 +1,59 @@
+version: "3.8"
+
+x-app: &app-tpl
+    image: node:14.16.1-alpine
+    restart: always
+    user: "node"
+    working_dir: /home/node/app
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=docker
+    volumes:
+      - ./:/home/node/app
+    networks:
+      - my-network
+
+
+services:
+  migration:
+    <<: *app-tpl
+    container_name: searchery_migration
+    depends_on:
+      - db
+    command: "npm run typeorm:run"
+  searchery:
+    <<: *app-tpl
+    container_name: searchery
+    depends_on:
+      - db
+      - migration
+    ports:
+      - "9000:9001"
+    command: "npm run start"
+  db:
+    image: postgres
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./postgres:/data/postgres
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my-network
+
+networks:
+  my-network:
+
+volumes:
+  db:
+  adminer:

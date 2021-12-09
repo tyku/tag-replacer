@@ -1,12 +1,25 @@
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TAG_PATTERN, USER_PATTERN } from './search/constants';
 import { searchProvider } from './search-factory.provider';
+import { common, database } from './config';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      load: [database, common],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        configService.get<Record<string, any>>('database'),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, searchProvider([TAG_PATTERN, USER_PATTERN])],
 })
