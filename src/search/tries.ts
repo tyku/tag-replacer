@@ -14,8 +14,25 @@ export class Tries {
 
       if (!localVertex.hasTo(code)) {
         const vertex = new Vertex(code, localVertex);
+
         if (char === '*') {
           vertex.isPattern = true;
+          const aliases = new Map([
+            [Tries.getCode('1'), Tries.getCode('*')],
+            [Tries.getCode('2'), Tries.getCode('*')],
+            [Tries.getCode('3'), Tries.getCode('*')],
+            [Tries.getCode('4'), Tries.getCode('*')],
+            [Tries.getCode('5'), Tries.getCode('*')],
+            [Tries.getCode('6'), Tries.getCode('*')],
+            [Tries.getCode('7'), Tries.getCode('*')],
+            [Tries.getCode('8'), Tries.getCode('*')],
+            [Tries.getCode('9'), Tries.getCode('*')],
+            [Tries.getCode('0'), Tries.getCode('*')],
+          ]);
+          localVertex.patternMap = aliases;
+          vertex.patternMap = aliases;
+
+          vertex.setTo(code, vertex);
         }
 
         localVertex.setTo(code, vertex);
@@ -56,21 +73,27 @@ export class Tries {
     let prevVertex = u;
 
     for (let i = 0; i < lowCaseStr.length; i++) {
+      // if (lowCaseStr[i] === '1')
+      //   console.log(lowCaseStr[i], Tries.getLetterByCode(948), u);
+      // if (lowCaseStr[i] === '2')
+      //   console.log(lowCaseStr[i], Tries.getLetterByCode(948), u);
+      // if (lowCaseStr[i] === '3')
+      //   console.log(lowCaseStr[i], Tries.getLetterByCode(948), u);
+      // if (lowCaseStr[i] === 'j')
+      //   console.log(lowCaseStr[i], Tries.getLetterByCode(948), u);
       u = this.go(u, Tries.getCode(lowCaseStr[i]));
+      // console.log(u.originalSymb);
+
+      if (u.pch >= 0) {
+        const letter = u.isPattern
+          ? u.originalSymb
+          : Tries.getLetterByCode(u.pch);
+        foundString += letter;
+      }
 
       if (prevVertex.isTerminal && u === this.root) {
-        let l = prevVertex;
-        console.log('-------------', prevVertex.originalSymb);
-        while (l.pch >= 0) {
-          const letter = l.isPattern
-            ? l.originalSymb
-            : Tries.getLetterByCode(l.pch);
-          foundString = letter + foundString;
-          l = l.p;
-        }
         result.push(foundString);
         foundString = '';
-        prevVertex.reset();
       }
 
       prevVertex = u;
@@ -80,17 +103,15 @@ export class Tries {
   }
 
   go(v: Vertex, code: number): Vertex {
-    const numberCode = Number(Tries.getLetterByCode(code));
-    const isNumber = !!numberCode && Number.isInteger(numberCode);
-    const originLetter = Tries.getLetterByCode(code);
-
-    if (isNumber) {
-      code = Tries.getCode('*');
-    }
-
     if (!v.hasGo(code)) {
       if (v.getTo(code)) {
-        v.setGo(code, v.getTo(code));
+        const u = v.getTo(code);
+        if (u.isPattern) u.originalSymb = Tries.getLetterByCode(code);
+
+        // if(Tries.getLetterByCode(code) === '1') console.log('--------', v.getTo(code))
+        // if(Tries.getLetterByCode(code) === '2') console.log('--------', v.getTo(code))
+        // if(Tries.getLetterByCode(code) === '3') console.log('--------', v.getTo(code))
+        v.setGo(code, u);
       } else if (v === this.root) {
         v.setGo(code, this.root);
       } else {
@@ -98,19 +119,13 @@ export class Tries {
       }
     }
 
-    const u = v.getGo(code);
-    if (isNumber) {
-      u.originalSymb += originLetter;
-    }
-    return u;
+    return v.getGo(code);
   }
 
   private link(v: Vertex): Vertex {
     if (!v.link) {
       if (v === this.root || v.p === this.root) {
         v.link = this.root;
-      } else if (v.isPattern) {
-        v.link = v.p;
       } else {
         v.link = this.go(this.link(v.p), v.pch);
       }

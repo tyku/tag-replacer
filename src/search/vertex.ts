@@ -9,6 +9,8 @@ export class Vertex {
 
   isPattern = false;
 
+  patternMap: Map<number, number>;
+
   originalSymb = '';
 
   constructor(public pch: number, public p: Vertex) {
@@ -31,7 +33,17 @@ export class Vertex {
   getTo(code: number): Vertex {
     const { to } = this;
 
-    return to.get(code);
+    if (to.has(code)) {
+      return to.get(code);
+    }
+
+    if (!this.patternMap) {
+      return;
+    }
+
+    const key = this.patternMap.get(code);
+
+    return to.get(key);
   }
 
   setTo(code: number, vertex: Vertex): void {
@@ -42,14 +54,27 @@ export class Vertex {
 
   hasGo(code: number): boolean {
     const { go } = this;
+    if (!this.patternMap) {
+      return go.has(code);
+    }
 
-    return go.has(code);
+    const key = this.patternMap.get(code);
+
+    return go.has(key);
   }
 
   getGo(code: number): Vertex {
     const { go } = this;
+    if (go.has(code)) {
+      return go.get(code);
+    }
 
-    return go.get(code);
+    if (!this.patternMap) {
+      return;
+    }
+
+    const key = this.patternMap.get(code);
+    return go.get(key);
   }
 
   setGo(code: number, vertex: Vertex): void {
