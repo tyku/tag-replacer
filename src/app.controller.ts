@@ -12,7 +12,7 @@ export class AppController {
   })
   @Get('/search/mentions')
   mentions(): string[] {
-    return this.appService.run();
+    return this.appService.mentions();
   }
 
   @ApiResponse({
@@ -21,6 +21,6 @@ export class AppController {
   })
   @Get('/search/mentions/data')
   mentionData(): string[] {
-    return this.appService.run();
+    return this.appService.mentionData();
   }
 }
