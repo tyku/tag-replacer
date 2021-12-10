@@ -14,7 +14,7 @@ export class UserService {
   getMentions(ids: number[]) {
     return this.userRepo
       .createQueryBuilder()
-      .select(['id lastname firstname email'])
+      .select(['id, lastname, firstname, email'])
       .where(`id::integer IN (${ids})`)
       .execute();
   }

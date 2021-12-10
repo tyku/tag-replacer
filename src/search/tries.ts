@@ -6,8 +6,7 @@ import {
   DEFAULT_POINTER,
 } from './constants';
 
-import { getPattern } from './libs';
-import { getCode, getLetterByCode } from './libs/codes';
+import { getPattern, getCode, getLetterByCode } from './libs';
 
 export class Tries {
   private root = new Vertex(DEFAULT_CHAR, DEFAULT_POINTER);

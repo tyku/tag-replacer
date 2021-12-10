@@ -6,12 +6,8 @@ import { text } from './texts/brad_pitt.json';
 import { UserService } from './user.service';
 import { TagService } from './tag.service';
 import { TAG_TYPE, USER_TYPE } from './constants';
-import {
-  TMention,
-  TResultMentionsData,
-  TTagResult,
-  TUserResult,
-} from './types';
+import { TMention, TResultMentionsData } from './types';
+import { splitMention } from './search/libs';
 
 export type TMentionMap = Map<string, TMention[]>;
 
@@ -36,9 +32,10 @@ export class AppService {
   }
 
   private parseMentions(rawMentions: string[] = []): TMentionMap {
-    const tagRegexp = new RegExp(
-      `(${USER_TYPE}|${TAG_TYPE})-(\\d+)(\\([a-zа-я]+\\))?`,
-    );
+    // @todo This regexp works everywhere, except conde inside docker oO
+    // const tagRegexp = new RegExp(
+    //   `(${USER_TYPE}|${TAG_TYPE})-(\d+)\(([a-zа-я]+)?\)`,
+    // );
 
     const map: TMentionMap = new Map([
       [USER_TYPE, []],
@@ -46,7 +43,7 @@ export class AppService {
     ]);
 
     return rawMentions.reduce((acc, mention) => {
-      const [type, entityId, userValue] = tagRegexp.exec(mention);
+      const [type, entityId, userValue] = splitMention(mention);
 
       if (!type || !entityId) {
         return acc;
@@ -96,25 +93,29 @@ export class AppService {
     type: string,
     data: Record<string, any>[],
     mention: TMention[],
-  ): TUserResult[] | TTagResult[] {
-    data.reduce((acc, { id, ...rest }) => {
-      const fondMention = mention.find(({ id: mentionId }) => id === mentionId);
+  ) {
+    const mergedMention = data.reduce((acc, { id, ...rest }) => {
+      const fondMention = mention.find(
+        ({ id: mentionId }) => Number(id) === Number(mentionId),
+      );
 
-      if (fondMention) {
+      if (!fondMention) {
         return acc;
       }
       const restData =
         type === USER_TYPE ? this.getUserData(rest) : this.getTagData(rest);
 
       const result = {
-        mention,
+        userValue: fondMention.userValue,
+        mention: fondMention.mention,
         ...restData,
       };
       acc.push(result);
 
       return acc;
     }, []);
-    return;
+
+    return mergedMention;
   }
 
   private async buildResponse(
@@ -141,7 +142,7 @@ export class AppService {
     }
 
     if (tagMention.length) {
-      result[TAG_TYPE] = userMention;
+      result[TAG_TYPE] = tagMention;
     }
 
     return result;

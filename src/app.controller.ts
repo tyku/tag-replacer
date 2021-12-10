@@ -1,6 +1,8 @@
 import { ApiResponse } from '@nestjs/swagger';
 import { Controller, Get } from '@nestjs/common';
+
 import { AppService } from './app.service';
+import { TResultMentionsData } from './types';
 
 @Controller('/v1')
 export class AppController {
@@ -20,7 +22,7 @@ export class AppController {
     description: 'Found tags and mentions matched with data',
   })
   @Get('/search/mentions/data')
-  mentionData(): string[] {
+  mentionData(): Promise<TResultMentionsData> {
     return this.appService.mentionData();
   }
 }

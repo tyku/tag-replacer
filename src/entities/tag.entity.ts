@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('tag')
+@Entity('tags')
 export class TagEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;

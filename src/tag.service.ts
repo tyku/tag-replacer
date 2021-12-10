@@ -14,7 +14,7 @@ export class TagService {
   getMentions(ids: number[]) {
     return this.tagRepo
       .createQueryBuilder()
-      .select(['id tag'])
+      .select(['id, tag'])
       .where(`id::integer IN (${ids})`)
       .execute();
   }

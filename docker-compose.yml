@@ -1,7 +1,7 @@
 version: "3.8"
 
 x-app: &app-tpl
-    image: node:14.16.1-alpine
+    image: node:14.17.3
     restart: always
     user: "node"
     working_dir: /home/node/app
@@ -19,12 +19,14 @@ services:
   migration:
     <<: *app-tpl
     container_name: searchery_migration
+    restart: "no"
     depends_on:
       - db
     command: "npm run typeorm:run"
   searchery:
     <<: *app-tpl
     container_name: searchery
+    restart: always
     depends_on:
       - db
       - migration
