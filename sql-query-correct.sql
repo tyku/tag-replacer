@@ -15,3 +15,4 @@ join
     group by 1, to_date(cast(created_at as TEXT),'YYYY-MM-DD')) min on a.user_id = min.user_id AND a.created_at = min.date
 
 ) te ON t.user_id = te.user_id AND t.date = te.date
+ORDER BY date
