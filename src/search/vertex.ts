@@ -11,8 +11,6 @@ export class Vertex {
 
   patternMap;
 
-  originalSymb = '';
-
   constructor(public pch: number, public p: Vertex) {
     this.to = new Map();
     this.go = new Map();

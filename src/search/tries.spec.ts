@@ -1,19 +1,17 @@
 import { Tries } from './tries';
+import { Mask } from './libs/patternClass';
+import { LETTER_PATTERN, NUMBER_PATTERN } from './constants';
 
-describe('Tries tests', () => {
+describe('Tries tests with default pattern symbols(*, ?)', () => {
   let triesInstance = null;
 
   beforeEach(async () => {
     triesInstance = new Tries();
-    triesInstance.addWord('#tag-*').addWord('@user-*(?)');
-  });
-
-  describe('Get code', () => {
-    it('should return char code', () => {
-      expect(Tries.getCode('a')).toBe(1000);
-      expect(Tries.getCode('b')).toBe(1001);
-      expect(Tries.getCode('c')).toBe(1002);
-    });
+    triesInstance
+      .addMaskRule(new Mask(NUMBER_PATTERN, /[0-9]/))
+      .addMaskRule(new Mask(LETTER_PATTERN, /[а-яa-z]/))
+      .addWord('#tag-*')
+      .addWord('@user-*(?)');
   });
 
   describe('Find added word in trie', () => {
@@ -43,7 +41,6 @@ describe('Tries tests', () => {
         '#tag-434',
         '@user-123(ds)',
         '@user-53(dfad)',
-        '@user-9892',
       ]);
     });
   });
